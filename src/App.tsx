@@ -26,6 +26,7 @@ export const App = () => {
   const [priceRule, setPriceRule] = useState<string>();
   const [orderDetails, setOrderDetails] = useState<OrderDetail[]>([]);
 
+  // Generate list products
   const listProducts = useMemo<number[]>(() => {
     const ordersProducts = orderDetails.map((v) => v.productId);
 
@@ -36,6 +37,7 @@ export const App = () => {
     return remainingProduct;
   }, [orderDetails]);
 
+  // Filter out price rule based on what product has been orderred
   const filterPriceRuleByOrdered = useMemo<number[]>(() => {
     const result: number[] = [];
     const orderedProductId = orderDetails.map((v) => `${v.productId}`);
@@ -53,6 +55,14 @@ export const App = () => {
     return result;
   }, [orderDetails]);
 
+  // Add item from arr order details
+  const addProduct = () => {
+    setOrderDetails(
+      orderDetails.concat({ productId: listProducts[0], quantity: 0 })
+    );
+  };
+
+  // Edit item from arr order details
   const editOrderDetail = (
     index: number,
     field: "productId" | "quantity",
@@ -69,12 +79,7 @@ export const App = () => {
     setOrderDetails(cloneOrderDetails);
   };
 
-  const addProduct = () => {
-    setOrderDetails(
-      orderDetails.concat({ productId: listProducts[0], quantity: 0 })
-    );
-  };
-
+  // Delete item from arr order details
   const handleDelete = (index: number) => {
     const newArrOrders = orderDetails.filter((v, i) => i !== index);
     setOrderDetails(newArrOrders);
@@ -84,6 +89,7 @@ export const App = () => {
     }
   };
 
+  // calculate amount for particular product
   const calculateFinalAmount = useCallback(
     (orderDetail: OrderDetail, withPriceRule: boolean) => {
       const productDetail = products[orderDetail.productId];
@@ -107,6 +113,7 @@ export const App = () => {
     [priceRule]
   );
 
+  // calculate quantity for particular product
   const calculateFinalQuantity = useCallback(
     (orderDetail: OrderDetail, withPriceRule: boolean) => {
       const originalQuantity = orderDetail.quantity;
@@ -127,6 +134,7 @@ export const App = () => {
     [priceRule]
   );
 
+  // Calculate quantity
   const totalQuantity = useCallback(
     (withPriceRule: boolean) => {
       let result = 0;
@@ -141,6 +149,7 @@ export const App = () => {
     [orderDetails, calculateFinalQuantity]
   );
 
+  // Calculate amount
   const totalAmount = useCallback(
     (withPriceRule: boolean) => {
       let result = 0;
